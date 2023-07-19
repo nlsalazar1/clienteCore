@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1" />
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+
+<!-- Optional theme -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
+
+<script src="ruta_a_highcharts/highcharts.js"></script>
+
+</head>
+<body>
+
+<div id="barGraphContainer"></div>
+
+<script>
+    // Función para hacer la solicitud a la API y generar el gráfico de barras
+    function fetchAndDisplayBarGraph() {
+        const tipo = "tipo_ejemplo";
+        const valorMin = 0;
+        const valorMax = 100;
+
+        const apiUrl = `.../barGraph/${tipo}/${valorMin}/${valorMax}`;
+
+        // Realiza la solicitud a la API
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                // Procesa los datos recibidos (suponiendo que la respuesta es una lista de objetos de inmuebles)
+                const inmuebles = data;
+                const categories = inmuebles.map(inmueble => inmueble.tipo);
+                const values = inmuebles.map(inmueble => inmueble.precio);
+
+                // Genera el gráfico de barras con Highcharts
+                Highcharts.chart('barGraphContainer', {
+                    chart: {
+                        type: 'bar'
+                    },
+                    title: {
+                        text: 'Gráfico de barras de precios de inmuebles'
+                    },
+                    xAxis: {
+                        categories: categories,
+                        title: {
+                            text: 'Tipo de inmueble'
+                        }
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Precio'
+                        }
+                    },
+                    series: [{
+                        name: 'Precio',
+                        data: values
+                    }]
+                });
+            })
+            .catch(error => {
+                console.error('Error al obtener los datos de la API:', error);
+            });
+    }
+
+    // Llama a la función para mostrar el gráfico de barras cuando se cargue la página
+    document.addEventListener('DOMContentLoaded', fetchAndDisplayBarGraph);
+</script>
+
+
+</body>
+</html>
